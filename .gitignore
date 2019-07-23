@@ -9,3 +9,6 @@ npm-debug.*
 web-build/
 web-report/
 .DS_Store
+
+# a Android Studio folder
+.idea
