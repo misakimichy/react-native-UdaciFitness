@@ -12,3 +12,5 @@ web-report/
 
 # a Android Studio folder
 .idea
+
+.expo-shared
