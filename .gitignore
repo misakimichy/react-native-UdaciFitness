@@ -10,7 +10,11 @@ web-build/
 web-report/
 .DS_Store
 
-# a Android Studio folder
+# Android Studio
+local.properties
+.gradle
 .idea
+*.iml
+build.gradle
 
 .expo-shared
