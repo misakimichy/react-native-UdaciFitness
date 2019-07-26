@@ -1,4 +1,4 @@
-import { RECEIVE_ENTRIES, ADD_ENTRY } from '../actions/index';
+import { RECEIVE_ENTRIES, ADD_ENTRY } from '../actions';
 
 function entries (state = {}, action) {
     switch(action.type) {
@@ -17,4 +17,4 @@ function entries (state = {}, action) {
     }
 }
 
-export default entries
+export default entries;
