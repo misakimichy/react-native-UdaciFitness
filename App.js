@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { View, Platform, StatusBar } from 'react-native';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { createAppContainer, createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Constants } from 'expo';
 import AddEntry from './components/AddEntry';
-import reducer from './reducers';
 import History from './components/History';
+import EntryDetail from './components/EntryDetail'
+import reducer from './reducers';
 import { purple, white } from './utils/colors';
 
 function UdaciStatusBar ({ backgroundColor, ...props }) {
@@ -18,7 +19,7 @@ function UdaciStatusBar ({ backgroundColor, ...props }) {
   )
 }
 
-const Tabs = {
+const Tabs = createBottomTabNavigator({
   History: {
     screen: History,
     navigationOption: {
@@ -33,29 +34,43 @@ const Tabs = {
       tabBarIcon: ({ tinColor }) => <FontAwesome name='plus-square' size={38} color={tinColor} />
     },
   },
-};
-
-const NavigationOptions = {
-  tabBarOptions: {
-    showIcon: true,
-    activeTinColor: Platform.OS === 'ios' ? purple : white,
-    style: {
-      height: 56,
-      backgroundColor: Platform.OS === 'ios' ? white : purple,
-      shadowColor: 'rgba(0, 0, 0, 0.24)',
-      shadowOffset: {
-          width: 0,
-          height: 3
+}, {
+    navigationOptions: {
+      header: null
+    },
+    tabBarOptions: {
+      activeTinColor: Platform.OS === 'ios' ? purple : white,
+      style: {
+        height: 56,
+        backgroundColor: Platform.OS === 'ios' ? white : purple,
+        shadowColor: 'rgba(0, 0, 0, 0.24)',
+        shadowOffset: {
+            width: 0,
+            height: 3
+        },
+        shadowRadius: 6,
+        shadowOpacity: 1,
       },
-    shadowRadius: 6,
-    shadowOpacity: 1,
+    },
+})
+
+const MainNavigator = createAppContainer(createStackNavigator({
+  home: {
+    screen: Tabs,
+    navigationOptions: {
+      header: null,
     },
   },
-};
-
-const TabNav = createAppContainer(Platform.OS === 'ios'
-  ? createBottomTabNavigator(Tabs, NavigationOptions)
-  : createMaterialTopTabNavigator (Tabs, NavigationOptions))
+  EntryDetail: {
+    screen: EntryDetail,
+    navigationOptions: ({ navigation }) => ({
+      headerTintColor: white,
+      headerStyle: {
+        backgroundColor: purple,
+      },
+    }),
+  },
+}));
 
 export default class App extends Component {
   render() {
@@ -63,7 +78,7 @@ export default class App extends Component {
       <Provider store={createStore(reducer)}>
         <View style={{flex: 1}}>
           <UdaciStatusBar backgroundColor={purple} barStyle='light-content' />
-          <TabNav />
+          <MainNavigator />
         </View>
       </Provider>
     );
