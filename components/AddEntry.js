@@ -76,6 +76,7 @@ class AddEntry extends Component {
         }))
 
         // Navigate to Home
+        this.toHome();
 
         //Save to 'DB'
         submitEntry({ key, entry })
@@ -92,9 +93,15 @@ class AddEntry extends Component {
         }))
 
         // Route to Home
+        this.toHome();
+
         // Update 'DB'
         removeEntry(key);
     };
+
+    toHome = () => {
+        this.props.navigation.goBack();
+    }
 
     render() {
         const metaInfo = getMetricMetaInfo();
