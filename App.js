@@ -4,10 +4,11 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { Constants } from 'expo';
+import Constants from 'expo-constants';
 import AddEntry from './components/AddEntry';
 import History from './components/History';
-import EntryDetail from './components/EntryDetail'
+import EntryDetail from './components/EntryDetail';
+import Live from './components/Live';
 import reducer from './reducers';
 import { purple, white } from './utils/colors';
 
@@ -22,18 +23,25 @@ function UdaciStatusBar ({ backgroundColor, ...props }) {
 const Tabs = createBottomTabNavigator({
   History: {
     screen: History,
-    navigationOption: {
+    navigationOptions: {
       tabBarLabel: 'History',
       tabBarIcon: ({ tinColor }) => <Ionicons name='ios-bookmarks' size={30} color={tinColor} />
     },
   },
   AddEntry: {
     screen: AddEntry,
-    navigationOption: {
+    navigationOptions: {
       tabBarLabel: 'Add Entry',
       tabBarIcon: ({ tinColor }) => <FontAwesome name='plus-square' size={38} color={tinColor} />
     },
   },
+  Lice: {
+    screen: Live,
+    navigationOptions: {
+      tabBarLabel: 'Live',
+      tabBarIcon: ({ tinColor }) => <Ionicons name='ios-speedometer' size={30} color={tinColor} />
+    }
+  }
 }, {
     navigationOptions: {
       header: null
