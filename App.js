@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { View, Platform, StatusBar } from 'react-native';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { createStackNavigator, createBottomTabNavigator, createAppContainer } from 'react-navigation';
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+  createAppContainer
+} from 'react-navigation';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import AddEntry from './components/AddEntry';
@@ -11,6 +15,7 @@ import EntryDetail from './components/EntryDetail';
 import Live from './components/Live';
 import reducer from './reducers';
 import { purple, white } from './utils/colors';
+import { setLocalNotification } from './utils/helpers';
 
 function UdaciStatusBar ({ backgroundColor, ...props }) {
   return (
@@ -81,6 +86,9 @@ const MainNavigator = createAppContainer(createStackNavigator({
 }));
 
 export default class App extends Component {
+  componentDidMount () {
+    setLocalNotification();
+  }
   render() {
     return (
       <Provider store={createStore(reducer)}>
