@@ -1,13 +1,53 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, AsyncStorage } from 'react-native';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions'
 import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { white, red, orange, blue, lightPurp, pink } from './colors'
+import { white, red, orange, blue, lightPurp, pink } from './colors';
 
-export function getDailyReminderValue() {
-  return {
-    today: "👋 Don't forget to log your data today!"
+const NOTIFICATION_KEY = 'UdaciFitness:notifications';
+
+export function isBetween (num, x, y) {
+    if (num >= x && num <= y) {
+      return true
+    }
+    return false
   }
-}
+  
+  export function calculateDirection (heading) {
+    let direction = ''
+  
+    if (isBetween(heading, 0, 22.5)) {
+      direction = 'North'
+    } else if (isBetween(heading, 22.5, 67.5)) {
+      direction = 'North East'
+    } else if (isBetween(heading, 67.5, 112.5)) {
+      direction = 'East'
+    } else if (isBetween(heading, 112.5, 157.5)) {
+      direction = 'South East'
+    } else if (isBetween(heading, 157.5, 202.5)) {
+      direction = 'South'
+    } else if (isBetween(heading, 202.5, 247.5)) {
+      direction = 'South West'
+    } else if (isBetween(heading, 247.5, 292.5)) {
+      direction = 'West'
+    } else if (isBetween(heading, 292.5, 337.5)) {
+      direction = 'North West'
+    } else if (isBetween(heading, 337.5, 360)) {
+      direction = 'North'
+    } else {
+      direction = 'Calculating'
+    }
+  
+    return direction
+  }
+  
+  export function timeToString (time = Date.now()) {
+    const date = new Date(time)
+    const todayUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+    return todayUTC.toISOString().split('T')[0]
+  }
+
 
 const styles = StyleSheet.create({
   iconContainer: {
@@ -19,7 +59,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 20,
   }
-})
+});
+
 export function getMetricMetaInfo(metric) {
   const info = {
     run: {
@@ -118,44 +159,59 @@ export function getMetricMetaInfo(metric) {
     : info[metric]
 }
 
-export function isBetween (num, x, y) {
-    if (num >= x && num <= y) {
-      return true
+
+export function getDailyReminderValue() {
+  return {
+    today: "👋 Don't forget to log your data today!"
+  }
+}
+
+export function clearLocalNotification () {
+  return AsyncStorage.removeItem(NOTIFICATION_KEY)
+    .then(Notifications.cancelAllScheduledNotificationsAsync)
+}
+
+function createNotification () {
+  return {
+    title: 'Log your stats!',
+    body: "👋' don't forget to log your stats for today!",
+    ios: {
+      sound: true,
+    },
+    android: {
+      sound: true,
+      priority: 'high',
+      sticky: false,
+      vibrate: true,
     }
-  
-    return false
   }
-  
-  export function calculateDirection (heading) {
-    let direction = ''
-  
-    if (isBetween(heading, 0, 22.5)) {
-      direction = 'North'
-    } else if (isBetween(heading, 22.5, 67.5)) {
-      direction = 'North East'
-    } else if (isBetween(heading, 67.5, 112.5)) {
-      direction = 'East'
-    } else if (isBetween(heading, 112.5, 157.5)) {
-      direction = 'South East'
-    } else if (isBetween(heading, 157.5, 202.5)) {
-      direction = 'South'
-    } else if (isBetween(heading, 202.5, 247.5)) {
-      direction = 'South West'
-    } else if (isBetween(heading, 247.5, 292.5)) {
-      direction = 'West'
-    } else if (isBetween(heading, 292.5, 337.5)) {
-      direction = 'North West'
-    } else if (isBetween(heading, 337.5, 360)) {
-      direction = 'North'
-    } else {
-      direction = 'Calculating'
-    }
-  
-    return direction
-  }
-  
-  export function timeToString (time = Date.now()) {
-    const date = new Date(time)
-    const todayUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
-    return todayUTC.toISOString().split('T')[0]
-  }
+}
+
+export function setLocalNotification() {
+  AsyncStorage.getItem(NOTIFICATION_KEY)
+    .then(JSON.parse)
+    .then(data => {
+      if (data === null) {
+        PermissionRequest.askAsync(Permissions.NOTIFICATIONS)
+          .then(({ status }) => {
+            if (status === 'granted') {
+              Notifications.cancelAllScheduledNotificationsAsync()
+
+              let tomorrow = new Date();
+              tomorrow.setDate(tomorrow.getDate() + 1);
+              tomorrow.setHours(20);
+              tomorrow.setMinutes(0);
+
+              Notifications.scheduleLocalNotificationAsync(
+                createNotification(),
+                {
+                  time: tomorrow,
+                  repeat: 'day',
+                }
+              )
+              AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
+            }
+          })
+      }
+    })
+}
