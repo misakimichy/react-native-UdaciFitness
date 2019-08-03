@@ -1,8 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, AsyncStorage } from 'react-native';
 import { Notifications } from 'expo';
-import * as Permissions from 'expo-permissions'
-import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Permissions from 'expo-permissions';
+import {
+  FontAwesome,
+  MaterialIcons,
+  MaterialCommunityIcons }
+from '@expo/vector-icons';
 import { white, red, orange, blue, lightPurp, pink } from './colors';
 
 const NOTIFICATION_KEY = 'UdaciFitness:notifications';
@@ -192,7 +196,7 @@ export function setLocalNotification() {
     .then(JSON.parse)
     .then(data => {
       if (data === null) {
-        PermissionRequest.askAsync(Permissions.NOTIFICATIONS)
+        Permissions.askAsync(Permissions.NOTIFICATIONS)
           .then(({ status }) => {
             if (status === 'granted') {
               Notifications.cancelAllScheduledNotificationsAsync()
@@ -202,7 +206,7 @@ export function setLocalNotification() {
               tomorrow.setHours(20);
               tomorrow.setMinutes(0);
 
-              Notifications.scheduleLocalNotificationAsync(
+              Notifications.scheduleLocalNotificationsAsync(
                 createNotification(),
                 {
                   time: tomorrow,
