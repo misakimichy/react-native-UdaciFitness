@@ -5,8 +5,10 @@ import {
     ActivityIndicator,
     TouchableOpacity,
     StyleSheet,
-    Animated } from 'react-native';
-import { Location, Permissions } from 'expo';
+    Animated
+} from 'react-native';
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
 import { Foundation } from '@expo/vector-icons';
 import { purple, white } from '../utils/colors';
 import { calculateDirection } from '../utils/helpers';

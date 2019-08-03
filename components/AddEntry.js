@@ -3,7 +3,13 @@ import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native
 import { connect } from 'react-redux';
 import { Ionicons } from "@expo/vector-icons";
 import { submitEntry, removeEntry } from '../utils/api';
-import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers';
+import {
+    getMetricMetaInfo,
+    timeToString,
+    getDailyReminderValue,
+    clearLocalNotification,
+    setLocalNotification
+} from '../utils/helpers';
 import { white, purple } from '../utils/colors';
 import { addEntry } from '../actions';
 import UdaciSlider from './UdaciSlider';
@@ -82,6 +88,8 @@ class AddEntry extends Component {
         submitEntry({ key, entry })
 
         // Clear local notification
+        clearLocalNotification()
+            .then(setLocalNotification());
     };
 
     reset = () => {
